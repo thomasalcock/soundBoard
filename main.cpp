@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include "raylib.h"
+#include "tinyfiledialogs.h"
 
 #define VERSION_NUMBER "v0.1.0"
 #define TITLE "Soundboard " VERSION_NUMBER
@@ -102,19 +103,26 @@ int main() {
     mousePosition = GetMousePosition();
     leftClick = IsMouseButtonPressed(0);
     for (int i = 0; i < N_TOTAL_BUTTONS; i++) {
-       if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].rec)) {
-          std::cout << "Pressed button " << i+1 << "\n"; 
-          PlaySound(buttons[i].sound);
-       }
-       if (IsSoundPlaying(buttons[i].sound)) {
-          for (int j = 0; j < N_TOTAL_BUTTONS; j++) {
-             if (j != i) {
-                if (IsSoundPlaying(buttons[j].sound)) {
-                    StopSound(buttons[j].sound);
-                }
-             }
-          }
-       }
+      if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].pickSoundFile)) {
+         std::cout << "Pressed load file button " << i+1 << "\n";
+         const char* soundFilePath = tinyfd_openFileDialog(
+            "Select file", ".", 0, NULL, NULL, 0);
+         loadSoundToButton(buttons,i,soundFilePath);
+         continue;
+      }
+      if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].rec)) {
+         std::cout << "Pressed button " << i+1 << "\n"; 
+         PlaySound(buttons[i].sound);
+      }
+      if (IsSoundPlaying(buttons[i].sound)) {
+         for (int j = 0; j < N_TOTAL_BUTTONS; j++) {
+            if (j != i) {
+               if (IsSoundPlaying(buttons[j].sound)) {
+                  StopSound(buttons[j].sound);
+               }
+            }
+         }
+      }
     }
 
     BeginDrawing();
