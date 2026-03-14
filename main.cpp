@@ -12,6 +12,7 @@ const int N_ROWS = 3;
 const int N_COLS = 3;
 const Color BACKGROUND = {.r = 40, .g = 40, .b = 40, .a = 255};
 const Color RECT_COLOR = {.r = 100,.g = 100,.b = 100,.a = 255};
+const Color LOAD_SOUND_BUTTON_COLOR = {.r = 70,.g = 70, .b = 70, .a = 255};
 
 typedef struct Button {
   Rectangle rec;
@@ -20,7 +21,9 @@ typedef struct Button {
   std::string text;
   std::string  soundFile;
   Sound sound;
+  Rectangle pickSoundFile;
 } Button;
+
 
 const int N_TOTAL_BUTTONS = N_ROWS * N_COLS;
 Button buttons[N_TOTAL_BUTTONS];
@@ -29,6 +32,7 @@ const float BUTTON_WIDTH = (float)(WIDTH / N_ROWS - PADDING);
 const float BUTTON_HEIGHT = (float)(HEIGHT / N_COLS - PADDING);
 const float drawWidth = (float)BUTTON_WIDTH + PADDING;
 const float drawHeight = (float)BUTTON_HEIGHT + PADDING;
+
 
 bool loadSoundToButton(Button (&buttons)[N_TOTAL_BUTTONS], int index, const char* soundFile) {
   buttons[index].soundFile = soundFile;
@@ -56,6 +60,12 @@ int main() {
          .width = BUTTON_WIDTH,
          .height = BUTTON_HEIGHT
        };
+       buttons[counter].pickSoundFile = {
+         .x = buttons[counter].rec.x,
+         .y = buttons[counter].rec.y,
+         .width = BUTTON_WIDTH / 5,
+         .height = BUTTON_HEIGHT / 5
+       };
        buttons[counter].textX = buttons[counter].rec.x + BUTTON_WIDTH / 2;
        buttons[counter].textY = buttons[counter].rec.y + BUTTON_HEIGHT / 2;
        text << " Button " << counter+1; // TODO: this should be the file name
@@ -78,7 +88,8 @@ int main() {
     return 1;
   }
   
-  // TODO: implement a config file to load sounds from 
+  Texture2D loadSoundTexture = LoadTexture("assets/loadsoundicon_resized.png"); 
+  // TODO: open a file in os, load file into memory
   loadSoundToButton(buttons, 0, "sounds/horns2.ogg");
   loadSoundToButton(buttons, 1, "sounds/drumloop3.ogg");
   loadSoundToButton(buttons, 2, "sounds/funk.ogg");
@@ -114,6 +125,8 @@ int main() {
          } else {
             DrawRectangleRec(b.rec, RECT_COLOR);
          }
+         DrawRectangleRec(b.pickSoundFile, LOAD_SOUND_BUTTON_COLOR);
+         DrawTexture(loadSoundTexture, b.pickSoundFile.x, b.pickSoundFile.y, RED);
          DrawText(b.text.c_str(), b.textX, b.textY, 12, RAYWHITE);
        }
     EndDrawing();
