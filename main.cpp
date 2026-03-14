@@ -90,7 +90,8 @@ int main() {
   }
   
   Texture2D loadSoundTexture = LoadTexture("assets/loadsoundicon_resized.png"); 
-  // TODO: open a file in os, load file into memory
+  // TODO: remove this code, clean up the rest of the code
+  // TODO: enable mute group
   loadSoundToButton(buttons, 0, "sounds/horns2.ogg");
   loadSoundToButton(buttons, 1, "sounds/drumloop3.ogg");
   loadSoundToButton(buttons, 2, "sounds/funk.ogg");
