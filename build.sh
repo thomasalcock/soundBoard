@@ -1,16 +1,22 @@
 #/bin/bash
-
+set -ex
 EXE=builds/soundboard
 MODE=$1
+VALGRIND=$2
+SRC="main.cpp tinyfiledialogs/tinyfiledialogs.c"
+INCLUDE_PATHS="-I tinyfiledialogs" 
+LIBS="-lraylib -lm -lpthread -lrt -lX11"
+ARGS="-Wall -Wextra -Wpedantic -Werror"
 
 if [[ $MODE = "debug"  ]]; then
- g++ -g main.cpp tinyfiledialogs/tinyfiledialogs.c -I tinyfiledialogs \
-   -o $EXE --std=c++20 \
-   -Wall -Wextra -Wpedantic -Werror \
-   -lraylib -lm -lpthread -lrt -lX11 \
-    && ./$EXE 
+  if [[ $MODE = "yes" ]]; then
+    valgrind --leak-check=full log-file=memleak.txt --show-leak-kinds=all ./$EXE
+  else
+    ./$EXE
+  fi
 elif [[ $MODE = "release" ]]; then
- g++ main.cpp -o $EXE -O2 --std=c++20 \
-   -Wall -Wextra -Wpedantic -Werror \
-   -lraylib -lm -lpthread -lrt -lX11 && ./$EXE
+  EXE="${EXE}_release"
+  ARGS="${ARGS} -O2"
 fi
+
+g++ -g $SRC -o $EXE --std=c++20 $ARGS $LIBS $INCLUDE_PATHS
