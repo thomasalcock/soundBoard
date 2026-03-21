@@ -41,7 +41,7 @@ jobs:
 
       - name: Build Soundboard
         run: |
-          ./build.sh debug release
+          make release
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
