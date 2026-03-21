@@ -27,7 +27,7 @@ typedef struct Button {
 
 
 const int N_TOTAL_BUTTONS = N_ROWS * N_COLS;
-Button buttons[N_TOTAL_BUTTONS];
+Button buttons[N_TOTAL_BUTTONS]; // does this need to be static?
 const int PADDING = 10;
 const float BUTTON_WIDTH = (float)(WIDTH / N_ROWS - PADDING);
 const float BUTTON_HEIGHT = (float)(HEIGHT / N_COLS - PADDING);
@@ -42,6 +42,36 @@ bool loadSoundToButton(Button (&buttons)[N_TOTAL_BUTTONS], int index, const char
       std::cout << soundFile << " is not a valid sound file!" << std::endl;    
    }
    return result;
+}
+
+void playSoundOnKeyPress(Button buttons[N_TOTAL_BUTTONS]) {
+      if (IsKeyPressed(KEY_KP_7)) {
+         PlaySound(buttons[0].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_8)) {
+         PlaySound(buttons[1].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_9)) {
+         PlaySound(buttons[2].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_4)) {
+         PlaySound(buttons[3].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_5)) {
+         PlaySound(buttons[4].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_6)) {
+         PlaySound(buttons[5].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_1)) {
+         PlaySound(buttons[6].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_2)) {
+         PlaySound(buttons[7].sound);            
+      }
+      else if (IsKeyPressed(KEY_KP_3)) {
+         PlaySound(buttons[8].sound);            
+      }
 }
 
 int main() {
@@ -108,33 +138,7 @@ int main() {
             PlaySound(buttons[i].sound);
          }
 
-         if (IsKeyPressed(KEY_KP_7)) {
-            PlaySound(buttons[0].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_8)) {
-            PlaySound(buttons[1].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_9)) {
-            PlaySound(buttons[2].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_4)) {
-            PlaySound(buttons[3].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_5)) {
-            PlaySound(buttons[4].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_6)) {
-            PlaySound(buttons[5].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_1)) {
-            PlaySound(buttons[6].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_2)) {
-            PlaySound(buttons[7].sound);            
-         }
-         else if (IsKeyPressed(KEY_KP_3)) {
-            PlaySound(buttons[8].sound);            
-         }
+         playSoundOnKeyPress(buttons);
 
          if (IsSoundPlaying(buttons[i].sound)) {
             for (int j = 0; j < N_TOTAL_BUTTONS; j++) {
