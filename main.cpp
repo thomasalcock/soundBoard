@@ -44,7 +44,7 @@ bool loadSoundToButton(Button (&buttons)[N_TOTAL_BUTTONS], int index, const char
    return result;
 }
 
-void playSoundOnKeyPress(Button buttons[N_TOTAL_BUTTONS]) {
+void playSoundOnKeyPress(const Button buttons[N_TOTAL_BUTTONS]) {
       if (IsKeyPressed(KEY_KP_7)) {
          PlaySound(buttons[0].sound);            
       }
@@ -72,6 +72,12 @@ void playSoundOnKeyPress(Button buttons[N_TOTAL_BUTTONS]) {
       else if (IsKeyPressed(KEY_KP_3)) {
          PlaySound(buttons[8].sound);            
       }
+}
+
+void unloadSoundsFromButtons(const Button buttons[N_TOTAL_BUTTONS], const int N_TOTAL_BUTTONS) {
+   for (int i = 0; i < N_TOTAL_BUTTONS; i++) {
+      UnloadSound(buttons[i].sound);
+   }
 }
 
 int main() {
@@ -166,6 +172,7 @@ int main() {
       EndDrawing();
 
    }
+   unloadSoundsFromButtons(buttons, N_TOTAL_BUTTONS);
    CloseWindow();
    CloseAudioDevice();
    return 0;
