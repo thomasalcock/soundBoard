@@ -3,8 +3,8 @@ set -ex
 EXE=builds/soundboard
 MODE=$1
 VALGRIND=$2
-SRC="main.cpp tinyfiledialogs/tinyfiledialogs.c"
-INCLUDE_PATHS="-I tinyfiledialogs" 
+SRC="main.cpp libs/tinyfiledialogs/tinyfiledialogs.c"
+INCLUDE_PATHS="-I libs/tinyfiledialogs" 
 LIBS="-lraylib -lm -lpthread -lrt -lX11"
 ARGS="-Wall -Wextra -Wpedantic -Werror"
 
