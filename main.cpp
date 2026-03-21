@@ -105,10 +105,37 @@ int main() {
             continue;
          }
          if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].rec)) {
-            std::cout << "Pressed button " << i+1 << "\n"; 
             PlaySound(buttons[i].sound);
          }
-         
+
+         if (IsKeyPressed(KEY_KP_7)) {
+            PlaySound(buttons[0].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_8)) {
+            PlaySound(buttons[1].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_9)) {
+            PlaySound(buttons[2].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_4)) {
+            PlaySound(buttons[3].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_5)) {
+            PlaySound(buttons[4].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_6)) {
+            PlaySound(buttons[5].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_1)) {
+            PlaySound(buttons[6].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_2)) {
+            PlaySound(buttons[7].sound);            
+         }
+         else if (IsKeyPressed(KEY_KP_3)) {
+            PlaySound(buttons[8].sound);            
+         }
+
          if (IsSoundPlaying(buttons[i].sound)) {
             for (int j = 0; j < N_TOTAL_BUTTONS; j++) {
                if (j != i) {
