@@ -34,95 +34,95 @@ const float BUTTON_HEIGHT = (float)(HEIGHT / N_COLS - PADDING);
 const float drawWidth = (float)BUTTON_WIDTH + PADDING;
 const float drawHeight = (float)BUTTON_HEIGHT + PADDING;
 
-
 bool loadSoundToButton(Button (&buttons)[N_TOTAL_BUTTONS], int index, const char* soundFile) {
-  buttons[index].soundFile = soundFile;
-  buttons[index].sound = LoadSound(buttons[index].soundFile.c_str());
-  bool result = IsSoundValid(buttons[index].sound);
-  if (!result) {
-     std::cout << soundFile << " is not a valid sound file!" << std::endl;    
-  }
-  return result;
+   buttons[index].soundFile = soundFile;
+   buttons[index].sound = LoadSound(buttons[index].soundFile.c_str());
+   bool result = IsSoundValid(buttons[index].sound);
+   if (!result) {
+      std::cout << soundFile << " is not a valid sound file!" << std::endl;    
+   }
+   return result;
 }
 
 int main() {
    
-  SetTargetFPS(FPS);
-  std::cout << TITLE << std::endl;
+   SetTargetFPS(FPS);
+   std::cout << TITLE << std::endl;
 
-  std::ostringstream text;
+   std::ostringstream text;
 
-  int counter = 0;
-  for (int j = 0; j < N_COLS; j++) {
-    for (int i = 0; i < N_ROWS; i++) {
-       buttons[counter].rec = {
-         .x = drawWidth * i,
-         .y = drawHeight * j,
-         .width = BUTTON_WIDTH,
-         .height = BUTTON_HEIGHT
-       };
-       buttons[counter].pickSoundFile = {
-         .x = buttons[counter].rec.x,
-         .y = buttons[counter].rec.y,
-         .width = BUTTON_WIDTH / 5,
-         .height = BUTTON_HEIGHT / 5
-       };
-       buttons[counter].textX = buttons[counter].rec.x + BUTTON_WIDTH / 2;
-       buttons[counter].textY = buttons[counter].rec.y + BUTTON_HEIGHT / 2;
-       text << " Button " << counter+1; // TODO: this should be the file name
-       buttons[counter].text = text.str();
-       text.str("");
-       text.clear();
-       counter++;
-    }
-  }
-
-  Vector2 mousePosition;
-  bool leftClick;
-
-  InitWindow(WIDTH, HEIGHT, TITLE);
-  InitAudioDevice();
-
-  if(!IsAudioDeviceReady()) {
-    CloseWindow();
-    std::cout << "Error initializing audio device" << std::endl;
-    return 1;
-  }
-  
-  Texture2D loadSoundTexture = LoadTexture("assets/loadsoundicon_resized.png"); 
-  // TODO: enable mute group
-
-  while(!WindowShouldClose()) {
-
-    // TODO: play sounds when user hits key on keyboard as well
-    mousePosition = GetMousePosition();
-    leftClick = IsMouseButtonPressed(0);
-    for (int i = 0; i < N_TOTAL_BUTTONS; i++) {
-      if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].pickSoundFile)) {
-         std::cout << "Pressed load file button " << i+1 << "\n";
-         const char* soundFilePath = tinyfd_openFileDialog(
-            "Select file", ".", 0, NULL, NULL, 0);
-         loadSoundToButton(buttons,i,soundFilePath);
-         continue;
+   int counter = 0;
+   for (int j = 0; j < N_COLS; j++) {
+      for (int i = 0; i < N_ROWS; i++) {
+         buttons[counter].rec = {
+            .x = drawWidth * i,
+            .y = drawHeight * j,
+            .width = BUTTON_WIDTH,
+            .height = BUTTON_HEIGHT
+         };
+         buttons[counter].pickSoundFile = {
+            .x = buttons[counter].rec.x,
+            .y = buttons[counter].rec.y,
+            .width = BUTTON_WIDTH / 5,
+            .height = BUTTON_HEIGHT / 5
+         };
+         buttons[counter].textX = buttons[counter].rec.x + BUTTON_WIDTH / 2;
+         buttons[counter].textY = buttons[counter].rec.y + BUTTON_HEIGHT / 2;
+         text << " Button " << counter+1; // TODO: this should be the file name
+         buttons[counter].text = text.str();
+         text.str("");
+         text.clear();
+         counter++;
       }
-      if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].rec)) {
-         std::cout << "Pressed button " << i+1 << "\n"; 
-         PlaySound(buttons[i].sound);
-      }
-      if (IsSoundPlaying(buttons[i].sound)) {
-         for (int j = 0; j < N_TOTAL_BUTTONS; j++) {
-            if (j != i) {
-               if (IsSoundPlaying(buttons[j].sound)) {
-                  StopSound(buttons[j].sound);
+   }
+
+   Vector2 mousePosition;
+   bool leftClick;
+
+   InitWindow(WIDTH, HEIGHT, TITLE);
+   InitAudioDevice();
+
+   if(!IsAudioDeviceReady()) {
+      CloseWindow();
+      std::cout << "Error initializing audio device" << std::endl;
+      return 1;
+   }
+   
+   Texture2D loadSoundTexture = LoadTexture("assets/loadsoundicon_resized.png"); 
+   // TODO: enable mute group
+
+   while(!WindowShouldClose()) {
+
+      // TODO: play sounds when user hits key on keyboard as well
+      mousePosition = GetMousePosition();
+      leftClick = IsMouseButtonPressed(0);
+      for (int i = 0; i < N_TOTAL_BUTTONS; i++) {
+         if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].pickSoundFile)) {
+            std::cout << "Pressed load file button " << i+1 << "\n";
+            const char* soundFilePath = tinyfd_openFileDialog(
+               "Select file", ".", 0, NULL, NULL, 0);
+            loadSoundToButton(buttons,i,soundFilePath);
+            continue;
+         }
+         if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].rec)) {
+            std::cout << "Pressed button " << i+1 << "\n"; 
+            PlaySound(buttons[i].sound);
+         }
+         
+         if (IsSoundPlaying(buttons[i].sound)) {
+            for (int j = 0; j < N_TOTAL_BUTTONS; j++) {
+               if (j != i) {
+                  if (IsSoundPlaying(buttons[j].sound)) {
+                     StopSound(buttons[j].sound);
+                  }
                }
             }
          }
       }
-    }
 
-    BeginDrawing();
-       ClearBackground(BACKGROUND);
-       for (const auto& b : buttons) {
+      BeginDrawing();
+         ClearBackground(BACKGROUND);
+         for (const auto& b : buttons) {
          if (IsSoundPlaying(b.sound)) {
             DrawRectangleRec(b.rec, RED);
          } else {
@@ -131,11 +131,11 @@ int main() {
          DrawRectangleRec(b.pickSoundFile, LOAD_SOUND_BUTTON_COLOR);
          DrawTexture(loadSoundTexture, b.pickSoundFile.x, b.pickSoundFile.y, RED);
          DrawText(b.text.c_str(), b.textX, b.textY, 12, RAYWHITE);
-       }
-    EndDrawing();
+         }
+      EndDrawing();
 
-  }
-  CloseWindow();
-  CloseAudioDevice();
-  return 0;
+   }
+   CloseWindow();
+   CloseAudioDevice();
+   return 0;
 }
