@@ -1,7 +1,9 @@
 EXE=builds/soundboard
 SRC=main.cpp libs/tinyfiledialogs/tinyfiledialogs.c
-INCLUDE_PATHS=-I libs/tinyfiledialogs
-LIBS=-lraylib -lm -lpthread -lrt -lX11
+INCLUDE_PATHS=-I./libs/tinyfiledialogs -I./libs/raylib/src
+LIBRARY_SEARCH_PATHS=-L./libs/raylib/src
+#-l:staticlib.a tells the linker to statically link with this lib
+LINKER_FLAGS=-l:libraylib.a -lm -lpthread -lrt -lX11 
 ARGS=-Wall -Wextra -Wpedantic -Werror
 CC=g++
 
@@ -12,12 +14,13 @@ CC=g++
 install_raylib:
 	git clone --depth 1 https://github.com/raysan5/raylib.git raylib && \
 	mv raylib libs && cd libs/raylib/src/ && \
-	make PLATFORM=PLATFORM_DESKTOP && \
-	make PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=SHARED
+	make PLATFORM=PLATFORM_DESKTOP 
 
 debug:
-	$(CC) -g --std=c++20 $(SRC) -o $(EXE)  $(ARGS) $(LIBS) $(INCLUDE_PATHS)
+	$(CC) -g --std=c++20 $(SRC) -o $(EXE)  $(ARGS) \
+	 $(INCLUDE_PATHS) $(LIBRARY_SEARCH_PATHS)	$(LINKER_FLAGS)
 
 release:
-	$(CC) --std=c++20 $(SRC) -o $(EXE)_release  $(ARGS) -O2 $(LIBS) $(INCLUDE_PATHS)
+	$(CC) --std=c++20 $(SRC) -o $(EXE)_release  $(ARGS) -O2 \
+		$(INCLUDE_PATHS) $(LIBRARY_SEARCH_PATHS) $(LINKER_FLAGS) 
     

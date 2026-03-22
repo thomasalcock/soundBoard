@@ -32,12 +32,7 @@ jobs:
 
       - name: Download and Build raylib
         run: |
-          git clone --depth 1 https://github.com/raysan5/raylib.git raylib
-          cd raylib
-          mkdir build && cd build
-          cmake -DBUILD_EXAMPLES=OFF ..
-          make
-          sudo make install
+          make install_raylib
 
       - name: Build Soundboard
         run: |

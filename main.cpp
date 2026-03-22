@@ -129,7 +129,6 @@ int main() {
 
    while(!WindowShouldClose()) {
 
-      // TODO: play sounds when user hits key on keyboard as well
       mousePosition = GetMousePosition();
       leftClick = IsMouseButtonPressed(0);
       for (int i = 0; i < N_TOTAL_BUTTONS; i++) {
