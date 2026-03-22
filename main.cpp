@@ -1,11 +1,17 @@
 #include <iostream>
 #include <sstream>
+
 #include "raylib.h"
 #include "tinyfiledialogs.h"
+
+#include "loadsoundicon.h"
 
 #define VERSION_NUMBER "v0.1.0"
 #define TITLE "Soundboard " VERSION_NUMBER
 #define FPS 60
+
+// TODO: enable mute group
+// TODO: ship png file with exe
 
 int WIDTH = 800;
 int HEIGHT =  600;
@@ -123,9 +129,23 @@ int main() {
       std::cout << "Error initializing audio device" << std::endl;
       return 1;
    }
+  
+   /*
+   Image loadSoundImage = Image{
+     .data=assets_loadsoundicon_png, 
+     .width=35,
+     .height=35, 
+     .mipmaps=1, 
+     .format=PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA
+   };
+   */
+   Image loadSoundImage = LoadImageFromMemory(
+       ".png", 
+       assets_loadsoundicon_png,
+       assets_loadsoundicon_png_len
+   );
+   Texture2D loadSoundTexture = LoadTextureFromImage(loadSoundImage); 
    
-   Texture2D loadSoundTexture = LoadTexture("assets/loadsoundicon_resized.png"); 
-   // TODO: enable mute group
 
    while(!WindowShouldClose()) {
 
@@ -172,6 +192,8 @@ int main() {
 
    }
    unloadSoundsFromButtons(buttons, N_TOTAL_BUTTONS);
+   //UnloadImage(loadSoundImage);
+   //UnloadTexture(loadSoundTexture);
    CloseWindow();
    CloseAudioDevice();
    return 0;
