@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
@@ -29,6 +29,9 @@ jobs:
             libxinerama-dev \
             libgl1-mesa-dev \
             libglu1-mesa-dev
+
+      - name: Install static version of glibc
+        run: sudo apt-get install glibc-static
 
       - name: Download and Build raylib
         run: |
