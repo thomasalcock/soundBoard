@@ -7,14 +7,50 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build_windows_2025:
+    runs-on: windows-2025
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            make
+            xxd
+      
+      - name: download and build raylib
+        run: |
+          make install_raylib
+
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          make release CC=x86_64-w64-mingw32-gcc
+
+      - name: build soundboard
+        run: |
+          make release
+
+      - name: upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: soundboard_linux_x86_64 
+          path: builds/soundboard_release
+          retention-days: 5   
+
+  build_ubuntu_2204:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout code
+      - name: checkout code
         uses: actions/checkout@v4
 
-      - name: Install System Dependencies
+      - name: install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -30,15 +66,15 @@ jobs:
             libgl1-mesa-dev \
             libglu1-mesa-dev
 
-      - name: Download and Build raylib
+      - name: download and build raylib
         run: |
           make install_raylib
 
-      - name: Build Soundboard
+      - name: build soundboard
         run: |
           make release
 
-      - name: Upload Build Artifact
+      - name: upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: soundboard_linux_x86_64 
