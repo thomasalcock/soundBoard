@@ -21,20 +21,15 @@ jobs:
           install: >-
             mingw-w64-x86_64-gcc
             make
-            xxd
       
       - name: download and build raylib
         run: |
           make install_raylib
 
-      - name: Build
+      - name: build soundboard for windows
         shell: msys2 {0}
         run: |
           make release CC=x86_64-w64-mingw32-gcc
-
-      - name: build soundboard
-        run: |
-          make release
 
       - name: upload build artifact
         uses: actions/upload-artifact@v4
