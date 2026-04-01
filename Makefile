@@ -1,5 +1,5 @@
 EXE=builds/soundboard
-SRC=main.c loadsoundicon.h libs/tinyfiledialogs/tinyfiledialogs.c 
+SRC=main.c libs/tinyfiledialogs/tinyfiledialogs.c 
 INCLUDE_PATHS=-I./libs/tinyfiledialogs -I./libs/raylib/src
 LIBRARY_SEARCH_PATHS=-L./libs/raylib/src
 LINKER_FLAGS=-l:libraylib.a -lm -lpthread -lrt -lX11 
