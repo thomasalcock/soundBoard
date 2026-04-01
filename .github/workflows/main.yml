@@ -28,7 +28,7 @@ jobs:
 
       - name: build soundboard for windows
         run: |
-          CC=clang make release 
+          make release CC=clang 
 
       - name: upload build artifact
         uses: actions/upload-artifact@v4
