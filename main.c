@@ -1,4 +1,5 @@
 #include <stdio.h> 
+#include <string.h>
 
 #include "raylib.h"
 #include "tinyfiledialogs.h"
@@ -11,8 +12,8 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-#define N_ROWS 4
-#define N_COLS 4
+#define N_ROWS 3
+#define N_COLS 3
 #define PADDING 10
 #define N_BUTTONS_CT (N_ROWS * N_COLS)
 
@@ -28,7 +29,7 @@ typedef struct Button {
   Rectangle rec;
   float textX;
   float textY;
-  char* text;
+  char text[32];
   const char* soundFile;
   Sound sound;
   Rectangle pickSoundFile;
@@ -88,9 +89,10 @@ void unloadSoundsFromButtons(const Button buttons[N_TOTAL_BUTTONS], const int N_
 
 int main() {
    
+   SetTraceLogLevel(LOG_ERROR);
    SetTargetFPS(FPS);
    printf("%s\n", TITLE);
-   char buttonText[9];
+   char buttonText[32];
    char* buttonBaseText = "Button";
 
    int counter = 0;
@@ -111,9 +113,13 @@ int main() {
          buttons[counter].textX = buttons[counter].rec.x + BUTTON_WIDTH / 2;
          buttons[counter].textY = buttons[counter].rec.y + BUTTON_HEIGHT / 2;
          int result = snprintf(buttonText, sizeof(buttonText), "%s %d", buttonBaseText, counter+1); 
+         printf("%s\n", buttonText);
          if (result<0) {
            printf("Error creating text for button %d\n", counter);
          }
+         strcpy(buttons[counter].text, buttonText);
+         //printf("%s\n", buttons[counter].text);
+         memset(buttonText, 0, sizeof(buttonText));
          counter++;
       }
    }
