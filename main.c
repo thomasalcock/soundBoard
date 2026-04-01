@@ -1,5 +1,4 @@
-#include <iostream>
-#include <sstream>
+#include <stdio.h> 
 
 #include "raylib.h"
 #include "tinyfiledialogs.h"
@@ -10,13 +9,17 @@
 #define TITLE "Soundboard " VERSION_NUMBER
 #define FPS 60
 
-// TODO: enable mute group
-// TODO: ship png file with exe
+#define WIDTH 800
+#define HEIGHT 600
+#define N_ROWS 4
+#define N_COLS 4
+#define PADDING 10
+#define N_BUTTONS_CT (N_ROWS * N_COLS)
 
-int WIDTH = 800;
-int HEIGHT =  600;
-const int N_ROWS = 3;
-const int N_COLS = 3;
+// TODO: add button / switch stop all sounds
+// TODO: enable mute group
+
+const int N_TOTAL_BUTTONS = N_ROWS * N_COLS;
 const Color BACKGROUND = {.r = 40, .g = 40, .b = 40, .a = 255};
 const Color RECT_COLOR = {.r = 100,.g = 100,.b = 100,.a = 255};
 const Color LOAD_SOUND_BUTTON_COLOR = {.r = 70,.g = 70, .b = 70, .a = 255};
@@ -25,27 +28,24 @@ typedef struct Button {
   Rectangle rec;
   float textX;
   float textY;
-  std::string text;
-  std::string  soundFile;
+  char* text;
+  const char* soundFile;
   Sound sound;
   Rectangle pickSoundFile;
 } Button;
 
-
-const int N_TOTAL_BUTTONS = N_ROWS * N_COLS;
-Button buttons[N_TOTAL_BUTTONS]; // does this need to be static?
-const int PADDING = 10;
+Button buttons[N_BUTTONS_CT]; // does this need to be static?
 const float BUTTON_WIDTH = (float)(WIDTH / N_ROWS - PADDING);
 const float BUTTON_HEIGHT = (float)(HEIGHT / N_COLS - PADDING);
 const float drawWidth = (float)BUTTON_WIDTH + PADDING;
 const float drawHeight = (float)BUTTON_HEIGHT + PADDING;
 
-bool loadSoundToButton(Button (&buttons)[N_TOTAL_BUTTONS], int index, const char* soundFile) {
+bool loadSoundToButton(Button buttons[N_TOTAL_BUTTONS], int index, const char* soundFile) {
    buttons[index].soundFile = soundFile;
-   buttons[index].sound = LoadSound(buttons[index].soundFile.c_str());
+   buttons[index].sound = LoadSound(buttons[index].soundFile);
    bool result = IsSoundValid(buttons[index].sound);
    if (!result) {
-      std::cout << soundFile << " is not a valid sound file!" << std::endl;    
+     printf("%s is not valid sound file!\n", soundFile); 
    }
    return result;
 }
@@ -89,20 +89,20 @@ void unloadSoundsFromButtons(const Button buttons[N_TOTAL_BUTTONS], const int N_
 int main() {
    
    SetTargetFPS(FPS);
-   std::cout << TITLE << std::endl;
-
-   std::ostringstream text;
+   printf("%s\n", TITLE);
+   char buttonText[9];
+   char* buttonBaseText = "Button";
 
    int counter = 0;
    for (int j = 0; j < N_COLS; j++) {
       for (int i = 0; i < N_ROWS; i++) {
-         buttons[counter].rec = {
+         buttons[counter].rec = (Rectangle){
             .x = drawWidth * i,
             .y = drawHeight * j,
             .width = BUTTON_WIDTH,
             .height = BUTTON_HEIGHT
          };
-         buttons[counter].pickSoundFile = {
+         buttons[counter].pickSoundFile = (Rectangle){
             .x = buttons[counter].rec.x,
             .y = buttons[counter].rec.y,
             .width = BUTTON_WIDTH / 5,
@@ -110,10 +110,10 @@ int main() {
          };
          buttons[counter].textX = buttons[counter].rec.x + BUTTON_WIDTH / 2;
          buttons[counter].textY = buttons[counter].rec.y + BUTTON_HEIGHT / 2;
-         text << " Button " << counter+1; // TODO: this should be the file name
-         buttons[counter].text = text.str();
-         text.str("");
-         text.clear();
+         int result = snprintf(buttonText, sizeof(buttonText), "%s %d", buttonBaseText, counter+1); 
+         if (result<0) {
+           printf("Error creating text for button %d\n", counter);
+         }
          counter++;
       }
    }
@@ -126,7 +126,7 @@ int main() {
 
    if(!IsAudioDeviceReady()) {
       CloseWindow();
-      std::cout << "Error initializing audio device" << std::endl;
+      printf("Error initializing audio device\n");
       return 1;
    }
   
@@ -153,7 +153,7 @@ int main() {
       leftClick = IsMouseButtonPressed(0);
       for (int i = 0; i < N_TOTAL_BUTTONS; i++) {
          if (leftClick && CheckCollisionPointRec(mousePosition, buttons[i].pickSoundFile)) {
-            std::cout << "Pressed load file button " << i+1 << "\n";
+            printf("Pressed load file button %d\n", i+1);
             const char* soundFilePath = tinyfd_openFileDialog(
                "Select file", ".", 0, NULL, NULL, 0);
             loadSoundToButton(buttons,i,soundFilePath);
@@ -178,15 +178,16 @@ int main() {
 
       BeginDrawing();
          ClearBackground(BACKGROUND);
-         for (const auto& b : buttons) {
-         if (IsSoundPlaying(b.sound)) {
-            DrawRectangleRec(b.rec, RED);
-         } else {
-            DrawRectangleRec(b.rec, RECT_COLOR);
-         }
-         DrawRectangleRec(b.pickSoundFile, LOAD_SOUND_BUTTON_COLOR);
-         DrawTexture(loadSoundTexture, b.pickSoundFile.x, b.pickSoundFile.y, RED);
-         DrawText(b.text.c_str(), b.textX, b.textY, 12, RAYWHITE);
+         for (int i=0; i<N_TOTAL_BUTTONS; i++) {
+           if (IsSoundPlaying(buttons[i].sound)) {
+              DrawRectangleRec(buttons[i].rec, RED);
+           } else {
+              DrawRectangleRec(buttons[i].rec, RECT_COLOR);
+           }
+           DrawRectangleRec(buttons[i].pickSoundFile, LOAD_SOUND_BUTTON_COLOR);
+           DrawTexture(loadSoundTexture, 
+               buttons[i].pickSoundFile.x, buttons[i].pickSoundFile.y, RED);
+           DrawText(buttons[i].text, buttons[i].textX, buttons[i].textY, 12, RAYWHITE);
          }
       EndDrawing();
 
