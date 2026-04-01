@@ -2,7 +2,7 @@ name: Build Soundboard
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "c_build" ]
   pull_request:
     branches: [ "master" ]
 
@@ -33,7 +33,7 @@ jobs:
       - name: upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: soundboard_linux_x86_64 
+          name: soundboard_linux_win
           path: builds/soundboard_release
           retention-days: 5   
 
